@@ -99,7 +99,7 @@ const buildTest = (test) => {
 
   expandMeta(test)
 
-  test.name = toLaxTitleCase(test.name)
+  test.name = test.classname.substring(test.classname.lastIndexOf('.') + 1, test.classname.length) + ' - ' + toLaxTitleCase(test.name)
 
   extactMessage(test)
 
@@ -152,8 +152,7 @@ const buildSuites = (suites) => {
       delete suite.errors
       delete suite.skipped
 
-      suite.name = suite.name || 'No Name'
-      suite.name = toLaxTitleCase(suite.name)
+      suite.name = 'Test Suite'
 
       if (suite.testcase) buildTests(suite)
 
@@ -190,12 +189,11 @@ const buildSuites = (suites) => {
         })
       }
 
-      suite.status = 'fail'
-      if (suite.count.tests > 0 && suite.count.tests === suite.count.pass) suite.status = 'pass'
-      if (suite.count.tests > 0 && suite.count.tests === suite.count.error) suite.status = 'error'
+      suite.status = 'pass'
+      if (suite.count.tests > 0 && suite.count.fail > 0) suite.status = 'fail'
+      if (suite.count.tests > 0 && suite.count.error > 0) suite.status = 'error'
       if (suite.count.tests > 0 && suite.count.tests === suite.count.skip) suite.status = 'skip'
       if (suite.count.tests > 0 && suite.count.tests === suite.count.unknown) suite.status = 'unknown'
-      if (suite.count.tests === 0) suite.status = 'pass'
 
       suite._uuid = uuid.v4()
       return suite
